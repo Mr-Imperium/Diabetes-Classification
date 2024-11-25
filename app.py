@@ -116,22 +116,30 @@ def main():
             value=int(ranges["Diastolic BP"]["mean"])
         )
         
+        # Use fallback values if 'Waist' is not in ranges
+        waist_min = float(ranges.get("Waist", {"min": 0})["min"])
+        waist_max = float(ranges.get("Waist", {"max": 100})["max"])
+        waist_mean = float(ranges.get("Waist", {"mean": 35})["mean"])
+        
         waist = st.number_input(
             "Waist (inches)",
-            min_value=float(ranges["Waist"]["min"]),
-            max_value=float(ranges["Waist"]["max"]),
-            value=float(ranges["Waist"]["mean"]),
+            min_value=waist_min,
+            max_value=waist_max,
+            value=waist_mean,
             format="%.1f"
         )
+        
+        hip_min = float(ranges.get("Hip", {"min": 0})["min"])
+        hip_max = float(ranges.get("Hip", {"max": 150})["max"])
+        hip_mean = float(ranges.get("Hip", {"mean": 40})["mean"])
         
         hip = st.number_input(
             "Hip (inches)",
-            min_value=float(ranges["Hip"]["min"]),
-            max_value=float(ranges["Hip"]["max"]),
-            value=float(ranges["Hip"]["mean"]),
+            min_value=hip_min,
+            max_value=hip_max,
+            value=hip_mean,
             format="%.1f"
         )
-        
         # Calculate Waist/hip ratio automatically
         user_inputs["Waist/hip ratio"] = waist / hip if hip != 0 else 0
         st.info(f"Calculated Waist/Hip Ratio: {user_inputs['Waist/hip ratio']:.2f}")
