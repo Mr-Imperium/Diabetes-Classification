@@ -11,10 +11,21 @@ import plotly.graph_objects as go
 def load_model():
     classifier = DiabetesClassifier()
     try:
+        # Add print statement to debug file path
+        import os
+        current_dir = os.getcwd()
+        print(f"Current working directory: {current_dir}")
+        print(f"Attempting to load model from: {os.path.join(current_dir, 'diabetes_model.pkl')}")
+        
         classifier.load_model('diabetes_model.pkl')
         return classifier
-    except:
-        st.error("Please ensure the model file 'diabetes_model.pkl' exists!")
+    except FileNotFoundError as e:
+        # More specific error message
+        st.error(f"Model file not found: {e}")
+        return None
+    except Exception as e:
+        # Catch and display any other exceptions
+        st.error(f"Error loading model: {e}")
         return None
 
 def create_gauge_chart(value, title):
