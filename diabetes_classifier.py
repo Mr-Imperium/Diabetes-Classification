@@ -27,6 +27,11 @@ class DiabetesClassifier:
         self.feature_ranges = None
         self.X_train = None
         self.y_train = None
+        self.selected_features = [
+            "Cholesterol", "Glucose", "HDL Chol", "Chol/HDL ratio",
+            "Age", "BMI", "Systolic BP", "Diastolic BP",
+            "Waist/hip ratio", "Weight", "Height"
+        ]
         self.feature_descriptions = {
             "Cholesterol": "Total cholesterol (mg/dL)",
             "Glucose": "Fasting blood sugar (mg/dL)",
