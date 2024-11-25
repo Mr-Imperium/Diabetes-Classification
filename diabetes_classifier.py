@@ -223,30 +223,37 @@ class DiabetesClassifier:
             logging.error(f"Error in training model: {str(e)}")
             raise
 
-    def predict(self, features: Dict[str, float]) -> Tuple[int, float]:
-        """Make a prediction using the trained model."""
-        if not self.model:
-            raise ValueError("Model not trained yet!")
-            
+    def predict(self, input_data):
+        # Ensure input is a DataFrame with correct columns
+        if isinstance(input_data, dict):
+            # Create DataFrame with selected features in the correct order
+            input_df = pd.DataFrame([input_data])[self.selected_features]
+        elif isinstance(input_data, pd.DataFrame):
+            # Ensure correct column order
+            input_df = input_data[self.selected_features]
+        else:
+            # Convert to DataFrame assuming input is an array-like
+            input_df = pd.DataFrame(input_data, columns=self.selected_features)
+        
+        # Prepare features for prediction
         try:
-            # Validate input
-            is_valid, warnings = self.validate_input(features)
+            # Ensure input is numeric and matches expected feature types
+            feature_array = input_df.astype(float)
             
-            # Create feature array
-            feature_array = np.array([features[feature] for feature in self.best_features])
-            feature_array = feature_array.reshape(1, -1)
-            
-            # Scale features
+            # Transform using the scaler
             scaled_features = self.scaler.transform(feature_array)
             
-            # Make prediction
-            prediction = self.model.predict(scaled_features)
-            probability = self.model.predict_proba(scaled_features)[0][1]
+            # Predict probability
+            probability = self.model.predict_proba(scaled_features)[:, 1]
+            prediction = (probability > 0.5).astype(int)
             
-            return prediction[0], probability
-            
+            return prediction[0], probability[0]
+        
         except Exception as e:
-            logging.error(f"Error in making prediction: {str(e)}")
+            # Add detailed error logging
+            st.error(f"Prediction error: {e}")
+            st.write("Input data:", input_df)
+            st.write("Input data types:", input_df.dtypes)
             raise
 
     def get_feature_importance(self) -> Dict[str, float]:
