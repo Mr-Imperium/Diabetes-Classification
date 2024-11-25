@@ -191,7 +191,7 @@ def main():
 
        
         # Convert user inputs to a DataFrame with selected features
-        prediction_input = pd.DataFrame([user_inputs])[self.selected_features]
+        prediction_input = pd.DataFrame([user_inputs])[SELECTED_FEATURES]
 
         # Make prediction
         prediction, probability = classifier.predict(prediction_input)
