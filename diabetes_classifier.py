@@ -130,30 +130,31 @@ class DiabetesClassifier:
             raise
             
     def validate_input(self, features: Dict[str, float]) -> Tuple[bool, list]:
-        """Validate input features against training data ranges."""
-        if not self.feature_ranges:
-            raise ValueError("Model not trained - feature ranges not available")
-            
-        warnings = []
-        is_valid = True
+    """Validate input features against training data ranges."""
+    if not self.feature_ranges:
+        raise ValueError("Model not trained - feature ranges not available")
         
-        for feature, value in features.items():
-            if feature in self.feature_ranges:
-                range_info = self.feature_ranges[feature]
-                # Check if value is within 3 standard deviations of the mean
-                lower_bound = range_info['mean'] - 3 * range_info['std']
-                upper_bound = range_info['mean'] + 3 * range_info['std']
+    warnings = []
+    is_valid = True
+    
+    for feature, value in features.items():
+        if feature in self.feature_ranges:
+            range_info = self.feature_ranges[feature]
+            # Check if value is within 3 standard deviations of the mean
+            lower_bound = range_info['mean'] - 3 * range_info['std']
+            upper_bound = range_info['mean'] + 3 * range_info['std']
+            
+            # Use scalar comparisons to avoid Series boolean ambiguity
+            if float(value) < lower_bound or float(value) > upper_bound:
+                warnings.append(f"{feature}: {value} is outside normal range "
+                             f"({lower_bound:.1f} - {upper_bound:.1f})")
+                is_valid = False
                 
-                if value < lower_bound or value > upper_bound:
-                    warnings.append(f"{feature}: {value} is outside normal range "
-                                 f"({lower_bound:.1f} - {upper_bound:.1f})")
-                    is_valid = False
-                    
-                # Additional validation for specific metrics
-                if feature == "Chol/HDL ratio" and value < 5:
-                    warnings.append("Chol/HDL ratio is in the desirable range (< 5)")
-                    
-        return is_valid, warnings
+            # Additional validation for specific metrics
+            if feature == "Chol/HDL ratio" and float(value) < 5:
+                warnings.append("Chol/HDL ratio is in the desirable range (< 5)")
+                
+    return is_valid, warnings
 
     def calculate_bmi(self, weight: float, height: float) -> float:
         """Calculate BMI using the formula: 703 × weight(lbs)/height(inches)²"""
