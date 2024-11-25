@@ -62,7 +62,7 @@ def main():
         return
 
     # Define the exact feature order
-    REQUIRED_FEATURES = [
+    SELECTED_FEATURES = [
         "Cholesterol", "Glucose", "HDL Chol", "Chol/HDL ratio",
         "Age", "BMI", "Systolic BP", "Diastolic BP",
         "Waist/hip ratio", "Weight", "Height"
