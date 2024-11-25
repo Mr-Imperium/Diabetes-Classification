@@ -188,9 +188,13 @@ def main():
             st.warning("Warnings:")
             for warning in warnings:
                 st.write(f"- {warning}")
-        
+
+       
+        # Convert user inputs to a DataFrame with selected features
+        prediction_input = pd.DataFrame([user_inputs])[self.selected_features]
+
         # Make prediction
-        prediction, probability = classifier.predict(user_inputs)
+        prediction, probability = classifier.predict(prediction_input)
         
         # Display results
         st.header("Assessment Results")
