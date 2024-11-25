@@ -60,7 +60,13 @@ def main():
     classifier = load_model()
     if not classifier:
         return
-    
+
+    # Define the exact feature order
+    REQUIRED_FEATURES = [
+        "Cholesterol", "Glucose", "HDL Chol", "Chol/HDL ratio",
+        "Age", "BMI", "Systolic BP", "Diastolic BP",
+        "Waist/hip ratio", "Weight", "Height"
+        
     # Get feature ranges and descriptions
     ranges = classifier.get_feature_ranges()
     
